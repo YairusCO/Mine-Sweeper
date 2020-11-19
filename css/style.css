@@ -1,0 +1,42 @@
+body {
+    background-color: white;
+    text-align: center;
+}
+
+.selected {
+    outline: 5px solid orange;
+}
+
+.mark {
+    background-color: lightpink
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table,
+th,
+td {
+    border: 1px solid grey;
+}
+
+.game-board td {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    font-size: 1.4em;
+}
+
+.boom {
+    background-color: rgb(149, 10, 10);
+}
+
+.shown {
+    background-color: green;
+}
+
+.un-shown {
+    background-color: white;
+}
