@@ -6,8 +6,9 @@ var isFirstClick = true;
 var gLevel = { SIZE: 6, MINES: 4 };
 var gGame = { isOn: false, shownCount: 0, markedCount: gLevel.MINES, secsPassed: 0, gLives: 3 }
 
-
+// @CR when you finish the project remove all console logs.
 function initGame() {
+    isFirstClick = true;
     smile('play');
     flag();
     occupied()
@@ -52,28 +53,40 @@ function renderBoard(board) {
         }
         strHTML += '</tr>';
     }
-    // console.log('strHTML is:');
-    // console.log(strHTML);
     var elBoard = document.querySelector('.game-board');
     elBoard.innerHTML = strHTML;
 }
 
 function cellClicked(event) {
+    console.log('game is on ', gGame.isOn);
+    //@CR make your code looks cleanner.. emxaple -- if(!gGame.isOn) return
     if (!gGame.isOn) {
         return
     }
+    console.log('is fitst click ', isFirstClick);
+    var elCell = event.target
+    var i = +elCell.dataset.i
+    var j = +elCell.dataset.j
+
     if (isFirstClick) {
-        gBoard = insertValues(gBoard);
-        isFirstClick = false;
+        if (event.button === 2) {
+            console.log('eror');
+            return;
+        } else if (event.button === 0) {
+            gBoard[i][j].isShown = true;
+            gBoard = insertValues(gBoard);
+            gGame.shownCount++;
+            occupied();
+            expandShown(gBoard, elCell, i, j);
+            isFirstClick = false;
+        }
     }
     stopTimer()
     if (!gStartTime) {
         gStartTime = new Date()
     }
     startTimer(updateTime)
-    var elCell = event.target
-    var i = +elCell.dataset.i
-    var j = +elCell.dataset.j
+
     if (gBoard[i][j].isShown) return
     if (event.button === 2) {
         cellMarked(elCell)
@@ -83,6 +96,10 @@ function cellClicked(event) {
         occupied();
         expandShown(gBoard, elCell, i, j);
     }
+
+    //@CR very nice way to handle mouse events.. and addEventlistenr to the window to ignore contextmenu (ev.preventDefault)
+    // you have many other ways to handle.. onclick // oncontextmenu that send the event thats do the preventDeafult.. in this way we dont 
+    // cancelled all window contextmenu..
 }
 
 function expandShown(board, elCell, i, j) {
@@ -153,6 +170,8 @@ function findNeighbors(board, cellI, cellJ) {
         jdx = res[index].j
         checkGameOver(1)
         findNeighbors(board, idx, jdx);
+        //@CR nice recursion good job nice understanting.. you are very smart and with the right practice and keeps on the 
+        // right Conventions youlle be GREAT !! 
     }
 }
 
@@ -223,7 +242,7 @@ function checkGameOver(num) {
         smile('gOver');
         lives();
         stopTimer()
-
+        shownAll()
         return console.log('Game Over!');
     }
     //Game ends when all mines are marked, and all the other cells are shown
@@ -232,6 +251,8 @@ function checkGameOver(num) {
         smile('win');
         console.log('win');
         stopTimer()
+        console.log('stop');
+        shownAll()
         isFirstClick = true;
         gGame = { isOn: false, shownCount: 0, markedCount: gLevel.MINES, secsPassed: 0, gLives: 3 }
 
@@ -261,4 +282,27 @@ function hard() {
     isFirstClick = true;
     gGame = { isOn: false, shownCount: 0, markedCount: gLevel.MINES, secsPassed: 0, gLives: 3 }
     initGame()
+}
+
+//@CR for sum i think you can handle large projects with allot of code.
+// you need to stay with the best practice way, that will 
+//help you to do whatever you want in a simple way.
+// keep going youre AWESOME !
+
+
+
+function shownAll() {
+
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[0].length; j++) {
+            var elCell = document.getElementById(`el-${i}-${j}`)
+            if (gBoard[i][j].isMine) {
+                elCell.innerText = MINE;
+            } else if (gBoard[i][j].minesAroundCount > 0) {
+                elCell.innerText = gBoard[i][j].minesAroundCount;
+            } else if (gBoard[i][j].minesAroundCount === 0) {
+                elCell.innerText = "";
+            }
+        }
+    }
 }
